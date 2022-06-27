@@ -259,12 +259,14 @@ window.addEventListener('DOMContentLoaded', () => {
   // создание карточек с помощью классов
 
   class MenuCard {
-    constructor(src, alt, title, descr, price, parent) {
+    constructor(src, alt, title, descr, price, parent, ...classes) {
       this.src = src;
       this.alt = alt;
       this.title = title;
       this.descr = descr;
       this.price = price;
+      this.classes = classes; // rest оператор возвращает массив
+
       this.parent = document.querySelector(parent); // parent уже будет ДОМ элементом
 
       this.course = 35;
@@ -280,16 +282,23 @@ window.addEventListener('DOMContentLoaded', () => {
       // метод рендер для создания карточки
       const element = document.createElement('div'); // создаем новый элемент и помещаем в него структуру
 
-      element.innerHTML = `                           
-        <div class="menu__item">
-          <img src=${this.src} alt=${this.alt}>
-          <h3 class="menu__item-subtitle">${this.title}</h3>
-          <div class="menu__item-descr">${this.descr}</div>
-          <div class="menu__item-divider"></div>
-          <div class="menu__item-price">
-            <div class="menu__item-cost">Цена:</div>
-            <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-          </div>
+      if (this.classes.length === 0) {
+        // проверяем на наличие данных в rest операторе (массиве)
+        this.classes = 'menu__item';
+        element.classList.add(this.classes); // задаем значение класса по дефолту 
+      } else {
+        // если значение прописанно в рест операторе, перебираем массив и пушим в классы элемента
+        this.classes.forEach(className => element.classList.add(className));
+      }
+
+      element.innerHTML = `
+        <img src=${this.src} alt=${this.alt}>
+        <h3 class="menu__item-subtitle">${this.title}</h3>
+        <div class="menu__item-descr">${this.descr}</div>
+        <div class="menu__item-divider"></div>
+        <div class="menu__item-price">
+          <div class="menu__item-cost">Цена:</div>
+          <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
         </div>
       `;
       this.parent.append(element); // пушим элемент в родителя
